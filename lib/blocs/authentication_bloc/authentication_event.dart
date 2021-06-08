@@ -1,0 +1,5 @@
+abstract class AuthenticationEvent{
+}
+class AuthenticationEventStarted extends AuthenticationEvent{}
+class AuthenticationEventLoggedIn extends AuthenticationEvent{}
+class AuthenticationEventLoggedOut extends AuthenticationEvent{}
