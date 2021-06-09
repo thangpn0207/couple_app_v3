@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:couple_app_v3/blocs/chat_room_bloc/chat_room_bloc.dart';
 import 'package:couple_app_v3/blocs/chat_room_bloc/chat_room_event.dart';
 import 'package:couple_app_v3/blocs/search_user_loc/search_user_bloc.dart';
-import 'package:couple_app_v3/blocs/search_user_loc/search_user_event.dart';
 import 'package:couple_app_v3/blocs/search_user_loc/search_user_state.dart';
+import 'package:couple_app_v3/model/chat_room.dart';
 import 'package:couple_app_v3/model/user_model.dart';
 import 'package:couple_app_v3/services/chat_service.dart';
+import 'package:couple_app_v3/services/repository_service.dart';
 import 'package:couple_app_v3/ui/chat_room_screen/chat_room_screen.dart';
 import 'package:couple_app_v3/ui/list_chat_screen/title/search_user_title.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class SearchUserScreen extends StatefulWidget {
 
 class _SearchUserScreenState extends State<SearchUserScreen> {
   ChatService _chatService = locator<ChatService>();
+  Repository _repository = locator<Repository>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +39,23 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () async {
-                      BlocProvider.of<SearchUserBloc>(context).add(
-                          EventAddChatRoom(
-                              user: widget.user,
-                              friendUser: state.user[index]));
+                      String chatRoomId = await _chatService.addChatRoom(widget.user, state.user[index]);
+                      DocumentSnapshot documentSnapshot = await _repository.getChatRoom(
+                          chatRoomId);
+                      ChatRoom chatRoomInfo = ChatRoom(
+                          id: documentSnapshot.data()['id'],
+                          title: documentSnapshot.data()['title'],
+                          imgUrl: documentSnapshot.data()['imgUrl'],
+                          lastMessageBy: documentSnapshot.data()['lastMessageBy']);
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                        return BlocProvider(
+                          create: (_) => ChatRoomBloc(user: widget.user, chatRoomId: chatRoomInfo.id)..add(ChatRoomLoad()),
+                          child: ChatRoomScreen(
+                            userModel: widget.user,
+                            chatRoomInfo: chatRoomInfo,
+                          ),
+                        );
+                      }));
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -47,8 +63,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                     ),
                   );
                 }));
-      } else if (state is GoToChatRoom) {
-        return ChatRoomScreen(userModel: widget.user, chatRoomInfo: state.chatRoomInfo);
       } else {
         return Center(
           child: CircularProgressIndicator(),
@@ -56,4 +70,5 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       }
     });
   }
+
 }
