@@ -16,7 +16,7 @@ class SearchUserTitle extends StatelessWidget {
             height: 60,
             width: 60,
             child: CircleAvatar(
-              backgroundImage: NetworkImage(userModel.imgUrl),
+              backgroundImage: NetworkImage(userModel.imgUrl??'null'),
             ),
           ),
           SizedBox(
@@ -26,12 +26,12 @@ class SearchUserTitle extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(userModel.displayName,style: TextStyle(
+                  Text(userModel.displayName??'null',style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff6a515e),
                   ),),
-                  Text(userModel.email,style: TextStyle(
+                  Text(userModel.email??'null',style: TextStyle(
                     fontSize: 18,
                     color: Color(0xff6a515e)
                   ),)

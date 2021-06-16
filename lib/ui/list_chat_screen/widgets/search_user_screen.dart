@@ -40,16 +40,16 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                   return GestureDetector(
                     onTap: () async {
                       String chatRoomId = await _chatService.addChatRoom(widget.user, state.user[index]);
-                      DocumentSnapshot documentSnapshot = await _repository.getChatRoom(
+                      DocumentSnapshot<Map<String,dynamic>> documentSnapshot = await _repository.getChatRoom(
                           chatRoomId);
                       ChatRoom chatRoomInfo = ChatRoom(
-                          id: documentSnapshot.data()['id'],
-                          title: documentSnapshot.data()['title'],
-                          imgUrl: documentSnapshot.data()['imgUrl'],
-                          lastMessageBy: documentSnapshot.data()['lastMessageBy']);
+                          id: documentSnapshot.data()!['id'],
+                          title: documentSnapshot.data()!['title'],
+                          imgUrl: documentSnapshot.data()!['imgUrl'],
+                          lastMessageBy: documentSnapshot.data()!['lastMessageBy']);
                       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
                         return BlocProvider(
-                          create: (_) => ChatRoomBloc(user: widget.user, chatRoomId: chatRoomInfo.id)..add(ChatRoomLoad()),
+                          create: (_) => ChatRoomBloc(user: widget.user, chatRoomId: chatRoomInfo.id??'')..add(ChatRoomLoad()),
                           child: ChatRoomScreen(
                             userModel: widget.user,
                             chatRoomInfo: chatRoomInfo,

@@ -12,7 +12,7 @@ import 'package:random_string/random_string.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ChatService {
+class   ChatService {
   final Repository _repository = locator<Repository>();
 
   Future<String> addChatRoom(UserModel user, UserModel friendUser) async {
@@ -43,11 +43,11 @@ class ChatService {
         documentToChatRoomInfoTransformer);
   }
 
-  StreamTransformer<QuerySnapshot,
+  StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
       List<ChatRoom>> documentToChatRoomInfoTransformer = StreamTransformer<
-      QuerySnapshot,
+      QuerySnapshot<Map<String, dynamic>>,
       List<ChatRoom>>.fromHandlers(
-      handleData: (QuerySnapshot snapShot, EventSink<List<ChatRoom>> sink) {
+      handleData: (QuerySnapshot<Map<String, dynamic>> snapShot, EventSink<List<ChatRoom>> sink) {
         List<ChatRoom> result = <ChatRoom>[];
         snapShot.docs.forEach((doc) {
           result.add(ChatRoom(
@@ -66,10 +66,10 @@ class ChatService {
   Stream<List<String>> getChatList(userId) {
     return _repository.getChatList(userId).transform(documentToChatListTransformer);
   }
-  StreamTransformer<DocumentSnapshot, List<String>> documentToChatListTransformer = StreamTransformer<DocumentSnapshot, List<String>>.fromHandlers(
-      handleData: (DocumentSnapshot snapShot, EventSink<List<String>> sink) {
+  StreamTransformer<DocumentSnapshot<Map<String, dynamic>>, List<String>> documentToChatListTransformer = StreamTransformer<DocumentSnapshot<Map<String,dynamic>>, List<String>>.fromHandlers(
+      handleData: (DocumentSnapshot<Map<String,dynamic>> snapShot, EventSink<List<String>> sink) {
         if (snapShot.exists) {
-          sink.add(snapShot.data().keys.toList());
+          sink.add(snapShot.data()!.keys.toList());
         } else {
           sink.add([]);
         }
@@ -82,11 +82,10 @@ class ChatService {
         documentToChatMessagesTransformer);
   }
 
-  StreamTransformer<QuerySnapshot,
-      List<Message>> documentToChatMessagesTransformer = StreamTransformer<
-      QuerySnapshot,
+  StreamTransformer<QuerySnapshot<Map<String, dynamic>>, List<Message>> documentToChatMessagesTransformer = StreamTransformer<
+      QuerySnapshot<Map<String, dynamic>>,
       List<Message>>.fromHandlers(
-      handleData: (QuerySnapshot snapShot, EventSink<List<Message>> sink) {
+      handleData: (QuerySnapshot<Map<String, dynamic>> snapShot, EventSink<List<Message>> sink) {
         List<Message> result = <Message>[];
         snapShot.docs.forEach((doc) {
           result.add(Message(

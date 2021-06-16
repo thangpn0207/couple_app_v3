@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:google_sign_in/google_sign_in.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Authentication {
   final FirebaseAuth _firebaseAuth;
@@ -25,22 +24,21 @@ class Authentication {
     final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
     final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount googleSignInAccount =
+    final GoogleSignInAccount? googleSignInAccount =
         await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
+        await googleSignInAccount!.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken);
 
     UserCredential result =
         await _firebaseAuth.signInWithCredential(credential);
-
-    User userDetails = result.user;
+    User? userDetails = result.user;
     UserModel newUser = UserModel(
-        id: userDetails.uid,
+        id: userDetails!.uid,
         email: userDetails.email,
-        displayName: userDetails.email.replaceAll("@gmail.com", ""),
+        displayName: userDetails.displayName,
         imgUrl: userDetails.photoURL);
     _repository.registerUser(newUser);
     return userDetails;
@@ -77,7 +75,7 @@ class Authentication {
 
   Future<UserModel> getUser() async {
     var firebaseUser =  _firebaseAuth.currentUser;
-    var user = await _repository.getUser(firebaseUser.uid);
+    var user = await _repository.getUser(firebaseUser!.uid);
     if (user == null) {
       user = UserModel(
           id: firebaseUser.uid,
@@ -95,8 +93,7 @@ class Authentication {
   }
 
   Future signOut() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+
     Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
   }
 }

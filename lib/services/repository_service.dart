@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:couple_app_v3/model/chat_message.dart';
 import 'package:couple_app_v3/model/chat_room.dart';
+import 'package:couple_app_v3/model/song.dart';
 import 'package:couple_app_v3/model/user_model.dart';
 
 class Repository {
@@ -21,10 +22,10 @@ class Repository {
         .transform(documentToUserInfoTransformer);
   }
 
-  StreamTransformer<QuerySnapshot, List<UserModel>>
+  StreamTransformer<QuerySnapshot<Map<String, dynamic>>, List<UserModel>>
       documentToUserInfoTransformer =
-      StreamTransformer<QuerySnapshot, List<UserModel>>.fromHandlers(handleData:
-          (QuerySnapshot snapShot, EventSink<List<UserModel>> sink) {
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>, List<UserModel>>.fromHandlers(handleData:
+          (QuerySnapshot<Map<String, dynamic>> snapShot, EventSink<List<UserModel>> sink) {
     List<UserModel> result = <UserModel>[];
     snapShot.docs.forEach((doc) {
       result.add(UserModel(
@@ -36,13 +37,13 @@ class Repository {
     sink.add(result);
   });
 
-  Future<UserModel?> getUser(String id) async {
+  Future<UserModel?> getUser(String? id) async {
     var doc = await _firebaseFirestore.collection('users').doc(id).get();
     return UserModel(
-        id: doc.data()['id'],
-        email: doc.data()['email'],
-        displayName: doc.data()['displayName'],
-        imgUrl: doc.data()['imgUrl']);
+        id: doc.data()!['id'],
+        email: doc.data()!['email'],
+        displayName: doc.data()!['displayName'],
+        imgUrl: doc.data()!['imgUrl']);
   }
 
   Future<void> registerUser(UserModel user) async {
@@ -70,7 +71,7 @@ class Repository {
   //   return await _firebaseFirestore.collection('chatRooms').doc(chatRoomId).get();
   // }
 
-  Future<void> updateUserChatList(String userId, String chatRoomId) async {
+  Future<void> updateUserChatList(String? userId, String chatRoomId) async {
     var chatListDoc =
     await _firebaseFirestore.collection('userAndChats').doc(userId).get();
     if (chatListDoc.exists) {
@@ -91,7 +92,7 @@ class Repository {
         .orderBy('lastMessageTs', descending: false)
         .snapshots();
   }
-  Future<DocumentSnapshot> getChatRoom(String chatRoomId) async {
+  Future<DocumentSnapshot<Map<String,dynamic>>> getChatRoom(String chatRoomId) async {
     return await _firebaseFirestore.collection('chatRooms').doc(chatRoomId).get();
   }
 
@@ -128,5 +129,22 @@ class Repository {
       });
     });
   }
-
+//song
+  Future<void> uploadSong(Song song,String chatRoomId) async{
+   return await FirebaseFirestore.instance
+       .collection('chatRooms')
+       .doc(chatRoomId)
+       .collection('songs')
+        .doc(song.songName)
+        .set(song.toJson())
+        .whenComplete(() => print('upload success'));
+  }
+  Stream<QuerySnapshot> getSongInChatRoom(String chatRoomId) {
+    return _firebaseFirestore
+        .collection('chatRooms')
+        .doc(chatRoomId)
+        .collection('songs')
+        .orderBy('songName', descending: false)
+        .snapshots();
+  }
 }

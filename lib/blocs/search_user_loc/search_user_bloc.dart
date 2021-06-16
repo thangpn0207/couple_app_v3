@@ -38,13 +38,15 @@ class SearchUserBloc extends Bloc<SearchEvent, SearchUserState> {
       UserModel friendModel) async* {
     yield SearchUserStateLoading();
     String chatRoomId = await _chatService.addChatRoom(user, friendModel);
-    DocumentSnapshot documentSnapshot = await _repository.getChatRoom(
+    DocumentSnapshot<Map<String,dynamic>> documentSnapshot = await _repository.getChatRoom(
         chatRoomId);
+
     ChatRoom chatRoomInfo = ChatRoom(
-        id: documentSnapshot.data()['id'],
-        title: documentSnapshot.data()['title'],
-        imgUrl: documentSnapshot.data()['imgUrl'],
-        lastMessageBy: documentSnapshot.data()['lastMessageBy']);
+        id: documentSnapshot.data()!['id'],
+        title: documentSnapshot.data()!['title'],
+        imgUrl: documentSnapshot.data()!['imgUrl'],
+        lastMessageBy: documentSnapshot.data()!['lastMessageBy']);
+
     yield GoToChatRoom(chatRoomId: chatRoomId, chatRoomInfo: chatRoomInfo);
     @override
     Future<void> close() {

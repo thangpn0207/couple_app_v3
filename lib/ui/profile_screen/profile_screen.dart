@@ -244,13 +244,13 @@ class ProfileScreen extends StatelessWidget {
             ),
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(userModel.imgUrl),
+              backgroundImage: NetworkImage(userModel.imgUrl??''),
             ),
             SizedBox(
               height: 15,
             ),
             Text(
-              userModel.displayName,
+              userModel.displayName??'',
               style: TextStyle(
                 fontSize: 25,
                 color: Color(0xff6a515e),

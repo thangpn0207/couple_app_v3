@@ -37,8 +37,10 @@ class ChatMessageInput extends StatelessWidget {
             width: 50,
             child: IconButton(
               onPressed: () {
-                onPressed(_controller.text);
-                _controller.clear();
+                if(_controller.text!=''){
+                  onPressed(_controller.text);
+                  _controller.clear();
+                }
               },
                 icon: Icon(
                   Icons.send,
