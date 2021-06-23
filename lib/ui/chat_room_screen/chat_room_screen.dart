@@ -209,8 +209,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         builder: (context, state) {
           if (state is MusicStateLoaded) {
             return Container(
+              decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+                color: Colors.white
+              ),
               padding: EdgeInsets.all(30),
-              color: Colors.white,
               child: Column(
                 children: [
                   Row(
@@ -221,6 +224,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           check=false;
                           BlocProvider.of<MusicBloc>(context)
                               .add(OnCloseButton());
+                          setState(() {
+                          });
                         },
                         icon: Icon(Icons.close),
                         color: Colors.black,

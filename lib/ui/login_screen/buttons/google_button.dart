@@ -16,8 +16,7 @@ class GoogleLoginButton extends StatelessWidget {
         child: ButtonTheme(
             child: ElevatedButton.icon(
               onPressed:
-                _onPressed
-              ,
+                _onPressed,
               icon: Icon(FontAwesomeIcons.google,color: Colors.white,size: 18,),
               label: Text(
                 "SignIn with Google",

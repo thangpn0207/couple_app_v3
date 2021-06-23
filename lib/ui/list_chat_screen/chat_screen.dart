@@ -46,12 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
             fontWeight: FontWeight.w300,
           ),
         ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(Icons.more_vert),
-          ),
-        ],
       ),
       body: BlocBuilder<ChatScreenBloc, ChatScreenState>(
         builder: (context, state) {

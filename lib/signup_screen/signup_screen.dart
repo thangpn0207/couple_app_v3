@@ -1,6 +1,8 @@
+import 'package:couple_app_v3/blocs/login_bloc/login_bloc.dart';
 import 'package:couple_app_v3/signup_screen/buttons/signup_button.dart';
+import 'package:couple_app_v3/ui/login_screen/login_screen.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
@@ -141,7 +143,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           'Login',
                           style: TextStyle(color: Colors.redAccent),

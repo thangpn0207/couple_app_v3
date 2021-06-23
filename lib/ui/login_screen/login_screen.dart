@@ -210,8 +210,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onFormSubmitted() {
-    _loginBloc.add(LoginEventWithEmailAndPasswordPressed(
-        email: _emailController.text, password: _passwordController.text));
+      if(_emailController.text!='' &&_passwordController.text!=''){
+        _loginBloc.add(LoginEventWithEmailAndPasswordPressed(
+            email: _emailController.text, password: _passwordController.text));
+        _emailController.text='';
+        _passwordController.text='';
+      }else{
+        print('error');
+      }
   }
 
   void _onGooglePressed() {
